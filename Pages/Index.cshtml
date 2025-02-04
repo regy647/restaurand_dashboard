@@ -1,0 +1,1508 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<style>
+/* Date Section Styling */
+.date-section {
+    padding: 8px 20px;
+    background-color: #4C78A8; /* Solid blue background */
+    border: none; /* Remove the border */
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Title Styling */
+.date-section-title {
+    font-size: 18px;
+    margin-right: 20px;
+    flex-shrink: 0;
+    padding-top: 5px;
+    color: #333333; /* Darker text color to match the rest of the page */
+}
+
+/* Selectors Container */
+.selectors-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Selector Styling */
+.selector {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333333; /* Darker text color to match the page text */
+}
+
+/* Input and Dropdown Styling */
+.date-picker, .dropdown {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none; /* Remove border for cleaner look */
+    border-radius: 4px;
+    background-color: #ffffff; /* White background for contrast */
+    min-width: 120px;
+    color: #333333; /* Darker text color to match the rest of the page */
+    font-weight: bold; /* Ensure visibility */
+}
+/* Charts Container */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+    width: 100%;
+}
+/* Chart Cards */
+.chart-card {
+    background-color: #e0e0e0; /* Slightly darker gray */
+    border: 1px solid #aaa; /* Subtle darker border */
+    border-radius: 8px;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    width: auto;
+    height: auto;
+    box-sizing: border-box;
+}
+.chart-card.large {
+    grid-column: span 3; 
+}
+.chart-card.hidden {
+    display: none;
+    visibility: hidden; 
+}
+/* Chart Title */
+.chart-title {
+    font-size: 20px;
+    font-weight: normal;
+    text-align: left;
+    margin: 0 0 10px 0;
+    color: #4A4A4A; /* Dark gray for text */
+}
+/* Chart Content Layout */
+.chart-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+/* Text Data */
+.chart-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 10px;
+}
+.chart-data p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: normal;
+    color: #4A4A4A; /* Dark gray for text */
+}
+/* Graph Container */
+.chart-graph-container {
+    background-color: #ffffff; /* White for background */
+    border: 1px solid #ddd; /* Subtle neutral border */
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+.chart-graph-container.large {
+    grid-column: span 2;
+}
+.chart-graph-container.hidden {
+    /*display: none;*/
+    visibility: hidden; 
+}
+/* Graph Styling */
+.chart-graph {
+    width: 100%;
+    height: 200px;
+}
+.chart-graph.large {
+    height: 250px;
+}
+.chart-graph canvas {
+    width: 100%;
+    height: 100%;
+}
+.difference {
+    font-size: 12px; /* Smaller font size */
+    margin-left: 5px; /* Add some space between the value and difference */
+    font-weight: bold;
+}
+
+.difference.positive {
+    color: #27AE60; /* Green for positive differences */
+}
+
+.difference.negative {
+    color: #C0392B; /* Red for negative differences */
+}
+
+.chart-card.extraLarge {
+    grid-column: span 3;
+}
+
+.chart-graph-container.extraLarge {
+    grid-column: span 3;
+    height: 300px;
+}
+
+.pie-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Reduced padding */
+    width: 45%; /* Adjusted width to make it smaller */
+    height: 400px; /* Same height for consistency */
+    box-sizing: border-box;
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Rounded edges */
+}
+
+.bar-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Slightly smaller padding */
+    width: 55%; /* Adjusted width to make it larger */
+    height: 400px; /* Same height as the pie chart */
+    box-sizing: border-box;
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Rounded edges */
+}
+
+.chart-wrapper {
+    display: flex;
+    justify-content: space-between; /* Ensure proper spacing between the two charts */
+    align-items: center;
+    width: 100%;
+    gap: 20px; /* Adjust gap between charts */
+}
+.custom-chart-container {
+    display: flex;
+    justify-content: space-between; /* Space between pie and bar charts */
+    align-items: center; /* Center align both charts */
+    padding: 20px; /* Add spacing inside the container */
+    background-color: #f8f9fa; /* Card-like background */
+    border-radius: 10px; /* Rounded edges */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 20px 0; /* Margin above and below the container */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.custom-pie-chart,
+.custom-bar-chart {
+    flex: 1; /* Allow both charts to resize equally */
+    max-width: 48%; /* Each chart takes less than half of the row */
+    height: 300px; /* Set the height of the charts */
+    padding: 10px; /* Add spacing inside individual chart areas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.custom-pie-chart canvas,
+.custom-bar-chart canvas {
+    max-height: 100%;
+    max-width: 100%;
+}
+</style>
+
+<!-- Date Section -->
+<section class="date-section">
+    <h2 class="date-section-title">Prikaži podatke za:</h2>
+    <div class="selectors-container">
+        <div class="selector">
+            <label for="month-selector">Mesec:</label>
+            <select id="month-selector" class="dropdown">
+                <option value="january">Januar</option>
+                <option value="february">Februar</option>
+                <option value="march">Marec</option>
+                <option value="april">April</option>
+                <option value="may">Maj</option>
+                <option value="june">Junij</option>
+                <option value="july">Julij</option>
+                <option value="august">Avgust</option>
+                <option value="september">September</option>
+                <option value="october">Oktober</option>
+                <option value="november">November</option>
+                <option value="december">December</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<div class="charts-container">
+    <!-- Card 1: Prihodki & odhodki -->
+    <div class="chart-card">
+        <h3 class="chart-title">Prihodki & odhodki</h3>
+        <div class="chart-data">
+            <p>Prihodki: <strong id="prihodki-value">13,564 €</strong><span id="prihodki-difference" class="difference">(+0%)</span></p>
+            <p>Odhodki: <strong id="odhodki-value">7,895 €</strong><span id="odhodki-difference" class="difference">(+0%)</span></p>
+            <p>Profit: <strong id="profit-value">5,669 €</strong><span id="profit-difference" class="difference">(+0%)</span></p>
+        </div>
+    </div>
+    <!-- Graph for Prihodki & odhodki -->
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartPrihodkiOdhodkiMonth"></canvas>
+        </div>
+    </div>
+    <!-- Graph for Prihodki & odhodki skozi leto -->
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartPrihodkiOdhodkiMonthToYear"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 2: Hrana & pijača -->
+    <div class="chart-card">
+        <h3 class="chart-title">Hrana & pijača</h3>
+        <div class="chart-data">
+            <p>Hrana/pijača skupaj: <strong id="hranaPijacaSkupaj-value">5,534 €</strong><span id="hranaPijaca-difference" class="difference">(+0%)</span></p>
+            <p>Brezalkoholne pijače: <strong id="brezAlkPijaca-value">795 €</strong><span id="brezAlkPijaca-difference" class="difference">(+0%)</span></p>
+            <p>Alkoholne pijače: <strong id="alkPijaca-value">2,669 €</strong><span id="alkPijaca-difference" class="difference">(+0%)</span></p>
+            <p>Živila: <strong id="zivila-value">1,790 €</strong><span id="zivila-difference" class="difference">(+0%)</span></p>
+        </div>
+    </div>
+
+    <!-- Graph for Hrana & pijača -->
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartHranaPijacaMonthToYear"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartHranaPijaca"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 4: Energenti-->
+    <div class="chart-card">
+        <h3 class="chart-title">Energetiki</h3>
+        <div class="chart-data">
+            <p>Energenti skupno: <strong id="energentiSkupaj-value">8,000 €</strong><span id="energentiSkupaj-difference" class="difference">(+0%)</span></p>
+            <p>Poraba vode: <strong id="voda-value">1,200 €</strong><span id="voda-difference" class="difference">(+0%)</span></p>
+            <p>Poraba elektrike: <strong id="elektrika-value">4,500 €</strong><span id="elektrika-difference" class="difference">(+0%)</span></p>
+            <p>Poraba plina: <strong id="plin-value">2,300 €</strong><span id="plin-difference" class="difference">(+0%)</span></p>
+        </div>
+    </div>
+    <!-- Graph for Energenti -->
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartEnergetiki"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartEnergetikiMonthToYear"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 5: Oglasevanje -->
+    <div class="chart-card">
+        <h3 class="chart-title">Oglasevanje</h3>
+        <div class="chart-data">
+            <p>Skupno: <strong id="oglasevanjeSkupno-value">1,000 €</strong><span id="oglasevanjeSkupno-difference" class="difference">(+0%)</span></p>
+            <p>Socialna omrežja: <strong id="socialnaOmrezja-value">400 €</strong><span id="socialnaOmrezja-difference" class="difference">(+0%)</span></p>
+            <p>Lokalno oglaševanje: <strong id="lokalnoOglasevanje-value">200 €</strong><span id="lokalnoOglasevanje-difference" class="difference">(+0%)</span></p>
+            <p>Spletno oglaševanje: <strong id="spletnoOglasevanje-value">150 €</strong><span id="spletnoOglasevanje-difference" class="difference">(+0%)</span></p>
+            <p>Program zvestobe: <strong id="programZvestobe-value">100 €</strong><span id="programZvestobe-difference" class="difference">(+0%)</span></p>
+            <p>Partnerstva: <strong id="partnerstva-value">100 €</strong><span id="partnerstva-difference" class="difference">(+0%)</span></p>
+            <p>Drugo: <strong id="drugo-value">250 €</strong><span id="drugo-difference" class="difference">(+0%)</span></p>
+        </div>
+    </div>
+
+    <!-- Graph for Oglasevanje -->
+    <div class="chart-graph-container large">
+        <div class="chart-graph large">
+            <canvas id="chartOglasevanje"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartOglaseveanjeMonthToYear"></canvas>
+        </div>
+    </div>
+    <!--PLACEHOLDERS-->
+    <div class="chart-graph-container hidden">
+        <div class="chart-graph">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container hidden">
+        <div class="chart-graph">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 6: Plače in nadomestila -->
+    <div class="chart-card">
+        <h3 class="chart-title">Plače in nadomestila</h3>
+        <div class="chart-data">
+            <p>Skupno: <strong id="placeNadomestilaSkupno-value">1,000 €</strong><span id="placeNadomestilaSkupno-difference" class="difference">(+0%)</span></p>
+            <p>Kuhinja: <strong id="kuhinjaPlace-value">400 €</strong><span id="kuhinjaPlace-difference" class="difference">(+0%)</span></p>
+            <p>Strežba: <strong id="strezbaPlace-value">200 €</strong><span id="strezbaPlace-difference" class="difference">(+0%)</span></p>
+            <p>Administracija: <strong id="administracijaPlace-value">150 €</strong><span id="administracijaPlace-difference" class="difference">(+0%)</span></p>
+        </div>
+    </div>
+    <!-- Graph for Plače in nadomestila -->
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartPlaceNadomestila"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container">
+        <div class="chart-graph">
+            <canvas id="chartPlaceNadomestilaMonthToYear"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 7: mesec skupno -->
+    <div class="chart-card large">
+        <h3 class="chart-title">Celotni Mesečni Stroški</h3>
+        <div class="chart-data">
+            <p>Oglasevanje: <strong id="oglasevanjeTotal-value">0 €</strong></p>
+            <p>Energetiki: <strong id="energentiTotal-value">0 €</strong></p>
+            <p>Hrana & Pijača: <strong id="hranaPijacaTotal-value">0 €</strong></p>
+            <p>Plače in Nadomestila: <strong id="placeNadomestilaTotal-value">0 €</strong></p>
+        </div>
+    </div>
+
+    <!-- Graphs for Entire Monthly Costs -->
+    <!--<div class="chart-graph-container extraLarge">
+        <div class="chart-graph">
+            <canvas id="chartTotalMonthlyCosts"></canvas>
+        </div>
+    </div>
+    <div class="chart-graph-container extraLarge">
+        <div class="chart-graph">
+            <canvas id="chartTotalMonthlyCostsComparison"></canvas>
+        </div>
+    </div>-->
+
+</div>
+<div class="custom-chart-container">
+    <div class="custom-bar-chart">
+        <canvas id="chartTotalMonthlyCostsComparison"></canvas>
+    </div>
+    <div class="custom-pie-chart">
+        <canvas id="chartTotalMonthlyCosts"></canvas>
+    </div>
+</div>
+
+<script>
+    const dataByMonth = {
+        1: { 
+            date: '2025-01-01', 
+            prihodki: 13564, odhodki: 7895, brezAlkPijaca: 795, alkPijaca: 2669, zivila: 1790, 
+            voda: 1200, elektrika: 4500, plin: 2300, socialnaOmrezja: 400, lokalnoOglasevanje: 200, 
+            spletnoOglasevanje: 150, programiZvestobe: 100, partnerstva: 100, drugo: 250, 
+            kuhinjaPlace: 400, strezbaPlace: 200, administracijaPlace: 150, najemnina: 1700, 
+            obcinskaNajemnina: 700, narocnine: 40 
+        },
+        2: { 
+            date: '2025-02-01', 
+            prihodki: 14500, odhodki: 8000, brezAlkPijaca: 820, alkPijaca: 2700, zivila: 1820, 
+            voda: 1300, elektrika: 4600, plin: 2350, socialnaOmrezja: 420, lokalnoOglasevanje: 210, 
+            spletnoOglasevanje: 160, programiZvestobe: 110, partnerstva: 110, drugo: 260, 
+            kuhinjaPlace: 410, strezbaPlace: 210, administracijaPlace: 160, najemnina: 1720, 
+            obcinskaNajemnina: 710, narocnine: 42 
+        },
+        3: { 
+            date: '2025-03-01', 
+            prihodki: 12000, odhodki: 7000, brezAlkPijaca: 810, alkPijaca: 2600, zivila: 1800, 
+            voda: 1250, elektrika: 4550, plin: 2300, socialnaOmrezja: 405, lokalnoOglasevanje: 205, 
+            spletnoOglasevanje: 155, programiZvestobe: 105, partnerstva: 105, drugo: 255, 
+            kuhinjaPlace: 405, strezbaPlace: 205, administracijaPlace: 155, najemnina: 1710, 
+            obcinskaNajemnina: 705, narocnine: 41 
+        },
+        4: { 
+            date: '2025-04-01', 
+            prihodki: 15000, odhodki: 8500, brezAlkPijaca: 830, alkPijaca: 2720, zivila: 1850, 
+            voda: 1350, elektrika: 4700, plin: 2400, socialnaOmrezja: 430, lokalnoOglasevanje: 220, 
+            spletnoOglasevanje: 170, programiZvestobe: 120, partnerstva: 120, drugo: 270, 
+            kuhinjaPlace: 420, strezbaPlace: 220, administracijaPlace: 170, najemnina: 1730, 
+            obcinskaNajemnina: 720, narocnine: 43 
+        },
+        5: { 
+            date: '2025-05-01', 
+            prihodki: 14000, odhodki: 7500, brezAlkPijaca: 840, alkPijaca: 2750, zivila: 1900, 
+            voda: 1400, elektrika: 4750, plin: 2450, socialnaOmrezja: 440, lokalnoOglasevanje: 230, 
+            spletnoOglasevanje: 180, programiZvestobe: 130, partnerstva: 130, drugo: 280, 
+            kuhinjaPlace: 430, strezbaPlace: 230, administracijaPlace: 180, najemnina: 1750, 
+            obcinskaNajemnina: 730, narocnine: 44 
+        },
+        6: { 
+            date: '2025-06-01', 
+            prihodki: 15500, odhodki: 8700, brezAlkPijaca: 850, alkPijaca: 2780, zivila: 1950, 
+            voda: 1450, elektrika: 4800, plin: 2500, socialnaOmrezja: 450, lokalnoOglasevanje: 240, 
+            spletnoOglasevanje: 190, programiZvestobe: 140, partnerstva: 140, drugo: 290, 
+            kuhinjaPlace: 440, strezbaPlace: 240, administracijaPlace: 190, najemnina: 1770, 
+            obcinskaNajemnina: 740, narocnine: 45 
+        },
+        7: { 
+            date: '2025-07-01', 
+            prihodki: 13000, odhodki: 6800, brezAlkPijaca: 860, alkPijaca: 2800, zivila: 2000, 
+            voda: 1500, elektrika: 4850, plin: 2550, socialnaOmrezja: 460, lokalnoOglasevanje: 250, 
+            spletnoOglasevanje: 200, programiZvestobe: 150, partnerstva: 150, drugo: 300, 
+            kuhinjaPlace: 450, strezbaPlace: 250, administracijaPlace: 200, najemnina: 1790, 
+            obcinskaNajemnina: 750, narocnine: 46 
+        },
+        8: { 
+            date: '2025-08-01', 
+            prihodki: 16000, odhodki: 9000, brezAlkPijaca: 870, alkPijaca: 2850, zivila: 2050, 
+            voda: 1550, elektrika: 4900, plin: 2600, socialnaOmrezja: 470, lokalnoOglasevanje: 260, 
+            spletnoOglasevanje: 210, programiZvestobe: 160, partnerstva: 160, drugo: 310, 
+            kuhinjaPlace: 460, strezbaPlace: 260, administracijaPlace: 210, najemnina: 1810, 
+            obcinskaNajemnina: 760, narocnine: 47 
+        },
+        9: { 
+            date: '2025-09-01', 
+            prihodki: 12500, odhodki: 7200, brezAlkPijaca: 880, alkPijaca: 2900, zivila: 2100, 
+            voda: 1600, elektrika: 4950, plin: 2650, socialnaOmrezja: 480, lokalnoOglasevanje: 270, 
+            spletnoOglasevanje: 220, programiZvestobe: 170, partnerstva: 170, drugo: 320, 
+            kuhinjaPlace: 470, strezbaPlace: 270, administracijaPlace: 220, najemnina: 1830, 
+            obcinskaNajemnina: 770, narocnine: 48 
+        },
+        10: { 
+            date: '2025-10-01', 
+            prihodki: 14500, odhodki: 8000, brezAlkPijaca: 890, alkPijaca: 2950, zivila: 2150, 
+            voda: 1650, elektrika: 5000, plin: 2700, socialnaOmrezja: 490, lokalnoOglasevanje: 280, 
+            spletnoOglasevanje: 230, programiZvestobe: 180, partnerstva: 180, drugo: 330, 
+            kuhinjaPlace: 480, strezbaPlace: 280, administracijaPlace: 230, najemnina: 1850, 
+            obcinskaNajemnina: 780, narocnine: 49 
+        },
+        11: { 
+            date: '2025-11-01', 
+            prihodki: 13500, odhodki: 7900, brezAlkPijaca: 900, alkPijaca: 3000, zivila: 2200, 
+            voda: 1700, elektrika: 5050, plin: 2750, socialnaOmrezja: 500, lokalnoOglasevanje: 290, 
+            spletnoOglasevanje: 240, programiZvestobe: 190, partnerstva: 190, drugo: 340, 
+            kuhinjaPlace: 490, strezbaPlace: 290, administracijaPlace: 240, najemnina: 1870, 
+            obcinskaNajemnina: 790, narocnine: 50 
+        },
+        12: { 
+            date: '2025-12-01', 
+            prihodki: 17000, odhodki: 9500, brezAlkPijaca: 910, alkPijaca: 3050, zivila: 2250, 
+            voda: 1750, elektrika: 5100, plin: 2800, socialnaOmrezja: 510, lokalnoOglasevanje: 300, 
+            spletnoOglasevanje: 250, programiZvestobe: 200, partnerstva: 200, drugo: 350, 
+            kuhinjaPlace: 500, strezbaPlace: 300, administracijaPlace: 250, najemnina: 1890, 
+            obcinskaNajemnina: 800, narocnine: 51 
+        },
+    };
+
+    function getMonthData(selectedMonth) {
+        return Object.values(dataByMonth).find(({ date }) => {
+            const monthFromData = new Date(date).getMonth() + 1; // Get month from date (1-indexed)
+            const monthFromDropdown = new Date(`2025-${selectedMonth}-01`).getMonth() + 1; // Get month index from dropdown value
+            return monthFromData === monthFromDropdown;
+        });
+    }
+
+    // Initialize charts
+    //Chart 1 PRIHODKI/ODHODKI
+    const ctx1 = document.getElementById('chartPrihodkiOdhodkiMonth').getContext('2d');
+    const prihodkiOdhodkiChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: ['Odhodki', 'Profit'],
+            datasets: [{
+                data: [7895, 5669],
+                backgroundColor: ['#4C78A8', '#F58518'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true,
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#000',
+                    font: {
+                        size: 12,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels],
+    });
+
+    //Chart 2  PRIHODKI/ODHODKI SKOZI_LETO
+    const ctx2 = document.getElementById('chartPrihodkiOdhodkiMonthToYear').getContext('2d');
+    const prihodkiOdhodkiYearChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(dataByMonth),
+            datasets: [
+                {
+                    label: 'Profit',
+                    data: Object.values(dataByMonth).map(m => m.prihodki - m.odhodki),
+                    backgroundColor: '#4C78A8',
+                },
+                {
+                    label: 'Odhodki',
+                    data: Object.values(dataByMonth).map(m => m.odhodki),
+                    backgroundColor: '#F58518',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true },
+            },
+            layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } }
+        },
+    });
+
+    // Chart 3: HRANA/PIJACA
+    const ctxHranaPijaca = document.getElementById('chartHranaPijaca').getContext('2d');
+    const hranaPijacaChart = new Chart(ctxHranaPijaca, {
+        type: 'pie',
+        data: {
+            labels: ['Brezalk. pijače', 'Alk. pijače', 'Živila'],
+            datasets: [{
+                data: [795, 2669, 1790],
+                backgroundColor: ['#4C78A8', '#F58518', '#E45756'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true, 
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#000', 
+                    font: {
+                        size: 12,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels], 
+    });
+
+    // Chart 4: HRANA/PIJACA SKOZI_LETO
+    const ctxHranaPijacaMonthToYear = document.getElementById('chartHranaPijacaMonthToYear').getContext('2d');
+    const mesec2 = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+    new Chart(ctxHranaPijacaMonthToYear, {
+        type: 'bar',
+        data: {
+            labels: mesec2,
+            datasets: [
+                {
+                    label: 'Brezalk. pijače',
+                    data: Object.values(dataByMonth).map(m => m.brezAlkPijaca),
+                    backgroundColor: '#4C78A8', 
+                },
+                {
+                    label: 'Alkoholne pijače',
+                    data: Object.values(dataByMonth).map(m => m.alkPijaca),
+                    backgroundColor: '#F58518', 
+                },
+                {
+                    label: 'Živila',
+                    data: Object.values(dataByMonth).map(m => m.zivila),
+                    backgroundColor: '#E45756', 
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true, 
+                },
+                y: {
+                    stacked: true, 
+                    beginAtZero: true,
+                },
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                }
+            }
+        }
+    });
+
+    // Chart 5: ENERGENTI
+    const ctxEnergetiki = document.getElementById('chartEnergetiki').getContext('2d');
+    const energentiChart = new Chart(ctxEnergetiki, {
+        type: 'pie',
+        data: {
+            labels: ['Voda', 'Elektrika', 'Plin'],
+            datasets: [{
+                data: [1200, 4500, 2300],
+                backgroundColor: ['#4C78A8', '#F58518', '#E45756'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true, 
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#000', 
+                    font: {
+                        size: 12,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels], 
+    });
+
+    // Chart 6: ENERGENTI SKOZI LETO
+    const ctxEnergetikiMonthToYear = document.getElementById('chartEnergetikiMonthToYear').getContext('2d');
+    const mesec3 = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+    const voda = [1200]; 
+    const elektrika = [4500]; 
+    const plin = [2300];
+
+    new Chart(ctxEnergetikiMonthToYear, {
+        type: 'bar',
+        data: {
+            labels: mesec3,
+            datasets: [
+                {
+                    label: 'Voda',
+                    data: Object.values(dataByMonth).map(m => m.voda),
+                    backgroundColor: '#4C78A8', 
+                },
+                {
+                    label: 'Elektrika',
+                    data: Object.values(dataByMonth).map(m => m.elektrika),
+                    backgroundColor: '#F58518', 
+                },
+                {
+                    label: 'Plin',
+                    data: Object.values(dataByMonth).map(m => m.plin),
+                    backgroundColor: '#E45756', 
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'right', 
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true, 
+                },
+                y: {
+                    stacked: true, 
+                    beginAtZero: true,
+                },
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                }
+            }
+        }
+    });
+
+    // Chart 7: Oglaševanje
+    const ctxOglasevanje = document.getElementById('chartOglasevanje').getContext('2d');
+    const oglasevanjeChart = new Chart(ctxOglasevanje, {
+        type: 'pie',
+        data: {
+            labels: ['SocialnaOmrezja', 'LokalnoOglasevanje', 'SpletnoOglasevanje', 'ProgramZvestobe', 'Partnerstva', 'Drugo'],
+            datasets: [{
+                data: [400, 200, 150, 100, 100, 250],
+                backgroundColor: ['#4C78A8', '#F58518', '#E45756', '#72B7B2', '#54A24B', '#ECA945'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true, 
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#000', 
+                    font: {
+                        size: 10,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels], 
+    });
+
+    // Chart 8: Oglasevanje skozi leto
+    const ctxOglasevanjeMonthToYear = document.getElementById('chartOglaseveanjeMonthToYear').getContext('2d');
+    const mesec4 = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+    const socialnaOmrezja = [400]; 
+    const lokalnoOglasevanje = [200]; 
+    const spetnoOglasevanje = [150];
+    const programZvestobe = [100];
+    const partnerstva = [100];
+    const drugo = [250];
+
+    new Chart(ctxOglasevanjeMonthToYear, {
+        type: 'bar',
+        data: {
+            labels: mesec4,
+            datasets: [
+                {
+                    label: 'Socialna omrezja',
+                    data: Object.values(dataByMonth).map(m => m.socialnaOmrezja),
+                    backgroundColor: '#4C78A8', 
+                },
+                {
+                    label: 'Lokalno oglaševanje',
+                    data: Object.values(dataByMonth).map(m => m.lokalnoOglasevanje),
+                    backgroundColor: '#F58518', 
+                },
+                {
+                    label: 'Spletno oglaševanje',
+                    data: Object.values(dataByMonth).map(m => m.spletnoOglasevanje),
+                    backgroundColor: '#E45756', 
+                },
+                {
+                    label: 'Program zvestobe',
+                    data: Object.values(dataByMonth).map(m => m.programiZvestobe),
+                    backgroundColor: '#72B7B2', 
+                },
+                {
+                    label: 'Partnerstva',
+                    data: Object.values(dataByMonth).map(m => m.partnerstva),
+                    backgroundColor: '#54A24B',
+                },
+                {
+                    label: 'drugo',
+                    data: Object.values(dataByMonth).map(m => m.drugo),
+                    backgroundColor: '#ECA945', 
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'right', 
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true, 
+                },
+                y: {
+                    stacked: true, 
+                    beginAtZero: true,
+                },
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                }
+            }
+        }
+    });
+
+    // Chart 9: Plače & nadomestila
+    const ctxPlaceNadomestila = document.getElementById('chartPlaceNadomestila').getContext('2d');
+    const placeNadomestilaChart = new Chart(ctxPlaceNadomestila, {
+        type: 'pie',
+        data: {
+            labels: ['Kuhinja', 'Strezba', 'Administracija'],
+            datasets: [{
+                data: [400, 200, 150],
+                backgroundColor: ['#4C78A8', '#F58518', '#E45756'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true, 
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#000', 
+                    font: {
+                        size: 10,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels], 
+    });
+
+     // Chart 10: Plače & nadomestila skozi leto
+    const ctxPlaceNadomestilaMonthToYear = document.getElementById('chartPlaceNadomestilaMonthToYear').getContext('2d');
+    const mesec5 = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+    const kuhinja = [400]; 
+    const strezba = [200]; 
+    const administracija = [150];
+
+    new Chart(ctxPlaceNadomestilaMonthToYear, {
+        type: 'bar',
+        data: {
+            labels: mesec5,
+            datasets: [
+                {
+                    label: 'Plače kuhinja',
+                    data: Object.values(dataByMonth).map(m => m.kuhinjaPlace),
+                    backgroundColor: '#4C78A8', 
+                },
+                {
+                    label: 'Plače strežba',
+                    data: Object.values(dataByMonth).map(m => m.strezbaPlace),
+                    backgroundColor: '#F58518', 
+                },
+                {
+                    label: 'Plače administracija',
+                    data: Object.values(dataByMonth).map(m => m.administracijaPlace),
+                    backgroundColor: '#E45756', 
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'right', 
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true, 
+                },
+                y: {
+                    stacked: true, 
+                    beginAtZero: true,
+                },
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                }
+            }
+        }
+    });
+
+
+    // CELOTNI STROSKI MESEC 
+    const ctxTotalMonthlyCosts = document.getElementById('chartTotalMonthlyCosts').getContext('2d');
+    const totalMonthlyCostsChart = new Chart(ctxTotalMonthlyCosts, {
+        type: 'pie',
+        data: {
+            labels: ['Oglasevanje', 'Energetiki', 'Hrana & Pijača', 'Plače in Nadomestila'],
+            datasets: [{
+                data: [0, 0, 0, 0], // Default placeholder values
+                backgroundColor: ['#4C78A8', '#F58518', '#E45756', '#72B7B2'],
+                borderColor: '#000',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+                datalabels: {
+                    display: true,
+                    formatter: (value, ctx) => {
+                        let total = ctx.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                        return percentage; // Display percentages
+                    },
+                    color: '#000',
+                    font: {
+                        size: 12,
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+        plugins: [ChartDataLabels],
+    });
+
+    // Initialize the bar chart for monthly breakdown by categories
+    const ctxTotalMonthlyCostsComparison = document.getElementById('chartTotalMonthlyCostsComparison').getContext('2d');
+    const totalMonthlyCostsComparisonChart = new Chart(ctxTotalMonthlyCostsComparison, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'],
+            datasets: [
+                {
+                    label: 'Oglasevanje',
+                    data: Object.values(dataByMonth).map(m => 
+                        (m.socialnaOmrezja || 0) +
+                        (m.lokalnoOglasevanje || 0) +
+                        (m.spletnoOglasevanje || 0) +
+                        (m.programiZvestobe || 0) +
+                        (m.partnerstva || 0) +
+                        (m.drugo || 0)
+                    ),
+                    backgroundColor: '#4C78A8',
+                },
+                {
+                    label: 'Energetiki',
+                    data: Object.values(dataByMonth).map(m => 
+                        (m.voda || 0) +
+                        (m.elektrika || 0) +
+                        (m.plin || 0)
+                    ),
+                    backgroundColor: '#F58518',
+                },
+                {
+                    label: 'Hrana & Pijača',
+                    data: Object.values(dataByMonth).map(m => 
+                        (m.brezAlkPijaca || 0) +
+                        (m.alkPijaca || 0) +
+                        (m.zivila || 0)
+                    ),
+                    backgroundColor: '#E45756',
+                },
+                {
+                    label: 'Plače in Nadomestila',
+                    data: Object.values(dataByMonth).map(m => 
+                        (m.kuhinjaPlace || 0) +
+                        (m.strezbaPlace || 0) +
+                        (m.administracijaPlace || 0)
+                    ),
+                    backgroundColor: '#72B7B2',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 10,
+                        font: {
+                            size: 12,
+                        }
+                    }
+                },
+            },
+            scales: {
+                x: {
+                    stacked: true, // Stack the bars for better visualization
+                },
+                y: {
+                    stacked: true, // Stack the bars for better visualization
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return `${value} €`; // Format y-axis values as currency
+                        }
+                    }
+                },
+            },
+            layout: {
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                }
+            }
+        },
+    });
+
+    document.getElementById('month-selector').addEventListener('change', (event) => {
+        const selectedMonth = event.target.value; // e.g., 'januar'
+        console.log('Selected Month:', selectedMonth);
+
+        const monthData = getMonthData(selectedMonth);
+        console.log('Month Data:', monthData);
+
+        if (!monthData) {
+            console.error('No data found for selected month:', selectedMonth);
+            return;
+        }
+
+        const currentMonthIndex = new Date(`2025-${selectedMonth}-01`).getMonth() + 1;
+        const previousMonthIndex = currentMonthIndex === 1 ? 12 : currentMonthIndex - 1;
+        const previousMonthData = dataByMonth[previousMonthIndex] || {};
+
+        const { prihodki = 0, odhodki = 0, zivila = 0, alkPijaca = 0, brezAlkPijaca = 0, voda = 0, elektrika = 0, plin = 0, socialnaOmrezja = 0, lokalnoOglasevanje = 0, spletnoOglasevanje = 0, programiZvestobe = 0, partnerstva = 0, drugo = 0, kuhinjaPlace = 0, strezbaPlace = 0, administracijaPlace = 0 } = monthData;
+        const profit = prihodki - odhodki;
+        const hranaPijacaSkupaj = alkPijaca + brezAlkPijaca + zivila;
+        const energetikiSkupaj = voda + elektrika + plin;
+        const oglasevanjeSkupaj = socialnaOmrezja + lokalnoOglasevanje + spletnoOglasevanje + programiZvestobe + partnerstva + drugo;
+        const placeNadomestilaSkupaj = kuhinjaPlace + strezbaPlace + administracijaPlace;
+
+        //STROSKI SKUPNO MESEC
+        const totalMonthlyCosts = oglasevanjeSkupaj + energetikiSkupaj + hranaPijacaSkupaj + placeNadomestilaSkupaj;
+
+        // Update Display for Total Monthly Costs
+        document.getElementById('oglasevanjeTotal-value').textContent = `${oglasevanjeSkupaj.toLocaleString()} €`;
+        document.getElementById('energentiTotal-value').textContent = `${energetikiSkupaj.toLocaleString()} €`;
+        document.getElementById('hranaPijacaTotal-value').textContent = `${hranaPijacaSkupaj.toLocaleString()} €`;
+        document.getElementById('placeNadomestilaTotal-value').textContent = `${placeNadomestilaSkupaj.toLocaleString()} €`;
+
+        updateTotalMonthlyCostsChart(oglasevanjeSkupaj, energetikiSkupaj, hranaPijacaSkupaj, placeNadomestilaSkupaj);
+
+        // ** Update the Pie Chart for Total Monthly Costs **
+        function updateTotalMonthlyCostsChart(oglasevanjeSkupaj, energetikiSkupaj, hranaPijacaSkupaj, placeNadomestilaSkupaj) {
+            totalMonthlyCostsChart.data.datasets[0].data = [
+                oglasevanjeSkupaj,
+                energetikiSkupaj,
+                hranaPijacaSkupaj,
+                placeNadomestilaSkupaj
+            ];
+            totalMonthlyCostsChart.update();
+        }
+
+        // ** Update the Bar Chart for Total Monthly Costs Comparison **
+        // Update the Bar Chart for Monthly Costs Across the Year
+        const updatedBarChartData = {
+            oglasevanje: Object.values(dataByMonth).map(m =>
+                (m.socialnaOmrezja || 0) +
+                (m.lokalnoOglasevanje || 0) +
+                (m.spletnoOglasevanje || 0) +
+                (m.programiZvestobe || 0) +
+                (m.partnerstva || 0) +
+                (m.drugo || 0)
+            ),
+            energetiki: Object.values(dataByMonth).map(m =>
+                (m.voda || 0) +
+                (m.elektrika || 0) +
+                (m.plin || 0)
+            ),
+            hranaPijaca: Object.values(dataByMonth).map(m =>
+                (m.brezAlkPijaca || 0) +
+                (m.alkPijaca || 0) +
+                (m.zivila || 0)
+            ),
+            placeNadomestila: Object.values(dataByMonth).map(m =>
+                (m.kuhinjaPlace || 0) +
+                (m.strezbaPlace || 0) +
+                (m.administracijaPlace || 0)
+            ),
+        };
+
+        totalMonthlyCostsComparisonChart.data.datasets[0].data = updatedBarChartData.oglasevanje;
+        totalMonthlyCostsComparisonChart.data.datasets[1].data = updatedBarChartData.energetiki;
+        totalMonthlyCostsComparisonChart.data.datasets[2].data = updatedBarChartData.hranaPijaca;
+        totalMonthlyCostsComparisonChart.data.datasets[3].data = updatedBarChartData.placeNadomestila;
+
+        totalMonthlyCostsComparisonChart.update(); 
+
+        //PRIHODKI/ODHODKI
+        const prihodkiDifference = prihodki - (previousMonthData.prihodki || 0);
+        const prihodkiPercentage = ((prihodkiDifference / (previousMonthData.prihodki || 1)) * 100).toFixed(1);
+
+        const odhodkiDifference = odhodki - (previousMonthData.odhodki || 0);
+        const odhodkiPercentage = ((odhodkiDifference / (previousMonthData.odhodki || 1)) * 100).toFixed(1);
+
+        const profitDifference = profit - ((previousMonthData.prihodki || 0) - (previousMonthData.odhodki || 0));
+        const profitPercentage = previousMonthData.prihodki && previousMonthData.odhodki
+            ? ((profitDifference / ((previousMonthData.prihodki || 1) - (previousMonthData.odhodki || 1))) * 100).toFixed(1)
+            : 'N/A';
+
+        //HRANA/PIJACA
+        const hranaPijacaDifference = (alkPijaca + brezAlkPijaca + zivila) - (previousMonthData.alkPijaca + previousMonthData.brezAlkPijaca + previousMonthData.zivila);
+        const hranaPijacaPercentage = ((hranaPijacaDifference / ((previousMonthData.alkPijaca + previousMonthData.brezAlkPijaca + previousMonthData.zivila) || 1)) * 100).toFixed(1);
+
+        const brezAlkPijacaDifference = brezAlkPijaca - (previousMonthData.brezAlkPijaca || 0);
+        const brezAlkPijacaPercentage = ((brezAlkPijacaDifference / (previousMonthData.brezAlkPijaca || 1)) * 100).toFixed(1);
+
+        const alkPijacaDifference = alkPijaca - (previousMonthData.alkPijaca || 0);
+        const alkPijacaPercentage = ((alkPijacaDifference / (previousMonthData.alkPijaca || 1)) * 100).toFixed(1);
+
+        const zivilaDifference = zivila - (previousMonthData.zivila || 0);
+        const zivilaPercentage = ((zivilaDifference / (previousMonthData.zivila || 1)) * 100).toFixed(1);
+
+        //ENERGENTI
+        const energentiSkupajDifference = (voda + elektrika + plin) - (previousMonthData.voda + previousMonthData.elektrika + previousMonthData.plin);
+        const energentiSkupajPercentage = ((energentiSkupajDifference / ((previousMonthData.voda + previousMonthData.elektrika + previousMonthData.plin) || 1)) * 100).toFixed(1);
+
+        const vodaDifference = voda - (previousMonthData.voda || 0);
+        const vodaPercentage = ((vodaDifference / (previousMonthData.voda || 1)) * 100).toFixed(1);
+
+        const elektrikaDifference = elektrika - (previousMonthData.elektrika || 0);
+        const elektrikaPercentage = ((elektrikaDifference / (previousMonthData.elektrika || 1)) * 100).toFixed(1);
+
+        const plinDifference = plin - (previousMonthData.plin || 0);
+        const plinPercentage = ((plinDifference / (previousMonthData.plin || 1)) * 100).toFixed(1);
+
+        //SOCIALNA OMREZJA
+       const oglasevanjeSkupnoDifference = (
+        (socialnaOmrezja || 0) +
+        (lokalnoOglasevanje || 0) +
+        (spletnoOglasevanje || 0) +
+        (programiZvestobe || 0) +
+        (partnerstva || 0) +
+        (drugo || 0)
+    ) - (
+        (previousMonthData.socialnaOmrezja || 0) +
+        (previousMonthData.lokalnoOglasevanje || 0) +
+        (previousMonthData.spletnoOglasevanje || 0) +
+        (previousMonthData.programiZvestobe || 0) +
+        (previousMonthData.partnerstva || 0) +
+        (previousMonthData.drugo || 0)
+    );
+
+    const previousTotal =
+        (previousMonthData.socialnaOmrezja || 0) +
+        (previousMonthData.lokalnoOglasevanje || 0) +
+        (previousMonthData.spletnoOglasevanje || 0) +
+        (previousMonthData.programiZvestobe || 0) +
+        (previousMonthData.partnerstva || 0) +
+        (previousMonthData.drugo || 0);
+
+        const oglasevanjeSkupnoPercentage = ((oglasevanjeSkupnoDifference / (previousTotal || 1)) * 100).toFixed(1);
+        const socialnaOmrezjaDifference = socialnaOmrezja - (previousMonthData.socialnaOmrezja || 0);
+        const socialnaOmrezjaPercentage = ((socialnaOmrezjaDifference / (previousMonthData.socialnaOmrezja || 1)) * 100).toFixed(1);
+
+        const lokalnoOglasevanjeDifference = lokalnoOglasevanje - (previousMonthData.lokalnoOglasevanje || 0);
+        const lokalnoOglasevanjePercentage = ((lokalnoOglasevanjeDifference / (previousMonthData.elektrika || 1)) * 100).toFixed(1);
+
+        const spletnoOglasevanjeDifference = spletnoOglasevanje - (previousMonthData.spletnoOglasevanje || 0);
+        const spletnoOglasevanjePercentage = ((spletnoOglasevanjeDifference / (previousMonthData.spletnoOglasevanje || 1)) * 100).toFixed(1);
+
+        const programZvestobeDifference = programiZvestobe - (previousMonthData.programiZvestobe || 0);
+        const programZvestobePercentage = ((programZvestobeDifference / (previousMonthData.programiZvestobe || 1)) * 100).toFixed(1);
+
+        const partnerstvaDifference = partnerstva - (previousMonthData.partnerstva || 0);
+        const partnerstvaPercentage = ((partnerstvaDifference / (previousMonthData.partnerstva || 1)) * 100).toFixed(1);
+
+        const drugoDifference = drugo - (previousMonthData.drugo || 0);
+        const drugoPercentage = ((drugoDifference / (previousMonthData.drugo || 1)) * 100).toFixed(1);
+
+        //PLACE/NADOMESTILA
+        const placeNadomestilaSkupnoDifference = (kuhinjaPlace + strezbaPlace + administracijaPlace) - (previousMonthData.kuhinjaPlace + previousMonthData.strezbaPlace + previousMonthData.administracijaPlace);
+        const placeNadomestilaSkupnoPercentage = ((placeNadomestilaSkupnoDifference / ((previousMonthData.kuhinjaPlace + previousMonthData.strezbaPlace + previousMonthData.administracijaPlace) || 1)) * 100).toFixed(1);
+
+        const kuhinjaPlaceDifference = kuhinjaPlace - (previousMonthData.kuhinjaPlace || 0);
+        const kuhinjaPlacePercentage = ((kuhinjaPlaceDifference / (previousMonthData.kuhinjaPlace || 1)) * 100).toFixed(1);
+
+        const strezbaPlaceDifference = strezbaPlace - (previousMonthData.strezbaPlace || 0);
+        const strezbaPlacePercentage = ((strezbaPlaceDifference / (previousMonthData.strezbaPlace || 1)) * 100).toFixed(1);
+
+        const administracijaPlaceDifference = administracijaPlace - (previousMonthData.administracijaPlace || 0);
+        const administracijaPlacePercentage = ((administracijaPlaceDifference / (previousMonthData.administracijaPlace || 1)) * 100).toFixed(1);
+
+        function updateDifferenceDisplay(id, value, percentage) {
+            const element = document.getElementById(id);
+            element.textContent = `${value > 0 ? '+' : ''}${percentage}% (${value.toLocaleString()} €)`;
+            element.style.fontSize = '12px'; // Smaller font size
+            element.style.fontWeight = 'bold'; // Bold font
+            element.style.color = value > 0 ? 'green' : value < 0 ? 'red' : 'black'; // Green for positive, red for negative
+        }
+
+        updateDifferenceDisplay('prihodki-difference', prihodkiDifference, prihodkiPercentage);
+        updateDifferenceDisplay('odhodki-difference', odhodkiDifference, odhodkiPercentage);
+        updateDifferenceDisplay('profit-difference', profitDifference, profitPercentage);
+
+        updateDifferenceDisplay('hranaPijaca-difference', hranaPijacaDifference, prihodkiPercentage);
+        updateDifferenceDisplay('brezAlkPijaca-difference', brezAlkPijacaDifference, brezAlkPijacaPercentage);
+        updateDifferenceDisplay('alkPijaca-difference', alkPijacaDifference, alkPijacaPercentage);
+        updateDifferenceDisplay('zivila-difference', zivilaDifference, zivilaPercentage);
+
+        updateDifferenceDisplay('energentiSkupaj-difference', energentiSkupajDifference, energentiSkupajPercentage);
+        updateDifferenceDisplay('voda-difference', vodaDifference, vodaPercentage);
+        updateDifferenceDisplay('elektrika-difference', elektrikaDifference, elektrikaPercentage);
+        updateDifferenceDisplay('plin-difference', plinDifference, plinPercentage);
+
+        updateDifferenceDisplay('oglasevanjeSkupno-difference', oglasevanjeSkupnoDifference, oglasevanjeSkupnoPercentage);
+        updateDifferenceDisplay('socialnaOmrezja-difference', socialnaOmrezjaDifference, socialnaOmrezjaPercentage);
+        updateDifferenceDisplay('lokalnoOglasevanje-difference', lokalnoOglasevanjeDifference, lokalnoOglasevanjePercentage);
+        updateDifferenceDisplay('spletnoOglasevanje-difference', spletnoOglasevanjeDifference, spletnoOglasevanjePercentage);
+        updateDifferenceDisplay('programZvestobe-difference', programZvestobeDifference, programZvestobePercentage);
+        updateDifferenceDisplay('partnerstva-difference', partnerstvaDifference, partnerstvaPercentage);
+        updateDifferenceDisplay('drugo-difference', drugoDifference, drugoPercentage);
+
+        updateDifferenceDisplay('placeNadomestilaSkupno-difference', placeNadomestilaSkupnoDifference, placeNadomestilaSkupnoPercentage);
+        updateDifferenceDisplay('kuhinjaPlace-difference', kuhinjaPlaceDifference, kuhinjaPlacePercentage);
+        updateDifferenceDisplay('strezbaPlace-difference', strezbaPlaceDifference, strezbaPlacePercentage);
+        updateDifferenceDisplay('administracijaPlace-difference', administracijaPlaceDifference, administracijaPlacePercentage);
+
+        // PRIHODKI/ODHODKI
+        document.getElementById('prihodki-value').textContent = `${prihodki.toLocaleString()} €`;
+        document.getElementById('odhodki-value').textContent = `${odhodki.toLocaleString()} €`;
+        document.getElementById('profit-value').textContent = `${profit.toLocaleString()} €`;
+
+        // HRANA/PIJAČA
+        document.getElementById('hranaPijacaSkupaj-value').textContent = `${hranaPijacaSkupaj.toLocaleString()} €`;
+        document.getElementById('brezAlkPijaca-value').textContent = `${brezAlkPijaca.toLocaleString()} €`;
+        document.getElementById('alkPijaca-value').textContent = `${alkPijaca.toLocaleString()} €`;
+        document.getElementById('zivila-value').textContent = `${zivila.toLocaleString()} €`;
+
+        // ENERGETIKI
+        document.getElementById('energentiSkupaj-value').textContent = `${energetikiSkupaj.toLocaleString()} €`;
+        document.getElementById('voda-value').textContent = `${voda.toLocaleString()} €`;
+        document.getElementById('elektrika-value').textContent = `${elektrika.toLocaleString()} €`;
+        document.getElementById('plin-value').textContent = `${plin.toLocaleString()} €`;
+
+        // OGLASEVANJE
+        document.getElementById('oglasevanjeSkupno-value').textContent = `${oglasevanjeSkupaj.toLocaleString()} €`;
+        document.getElementById('socialnaOmrezja-value').textContent = `${socialnaOmrezja.toLocaleString()} €`;
+        document.getElementById('lokalnoOglasevanje-value').textContent = `${lokalnoOglasevanje.toLocaleString()} €`;
+        document.getElementById('spletnoOglasevanje-value').textContent = `${spletnoOglasevanje.toLocaleString()} €`;
+        document.getElementById('programZvestobe-value').textContent = `${programiZvestobe.toLocaleString()} €`;
+        document.getElementById('partnerstva-value').textContent = `${partnerstva.toLocaleString()} €`;
+        document.getElementById('drugo-value').textContent = `${drugo.toLocaleString()} €`;
+
+        // PLACE/NADOMESTILA
+        document.getElementById('placeNadomestilaSkupno-value').textContent = `${placeNadomestilaSkupaj.toLocaleString()} €`;
+        document.getElementById('kuhinjaPlace-value').textContent = `${kuhinjaPlace.toLocaleString()} €`;
+        document.getElementById('strezbaPlace-value').textContent = `${strezbaPlace.toLocaleString()} €`;
+        document.getElementById('administracijaPlace-value').textContent = `${administracijaPlace.toLocaleString()} €`;
+
+        // **Update the Pie Chart dynamically**
+        prihodkiOdhodkiChart.data.datasets[0].data = [odhodki, profit];
+        hranaPijacaChart.data.datasets[0].data = [brezAlkPijaca, alkPijaca, zivila];
+        energentiChart.data.datasets[0].data = [voda, elektrika, plin];
+        oglasevanjeChart.data.datasets[0].data = [socialnaOmrezja, lokalnoOglasevanje, spletnoOglasevanje, programiZvestobe, partnerstva, drugo];
+        placeNadomestilaChart.data.datasets[0].data = [kuhinjaPlace, strezbaPlace, administracijaPlace];
+
+        prihodkiOdhodkiChart.update();
+        hranaPijacaChart.update();
+        energentiChart.update();
+        oglasevanjeChart.update();
+        placeNadomestilaChart.update();
+    });
+</script>

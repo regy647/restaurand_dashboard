@@ -1,0 +1,395 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard_timotej";
+}
+
+<!-- Darker Block Container -->
+<div style="background-color: gray; padding: 20px; border-radius: 8px;">
+
+    <!-- Main Div Container for Calendar -->
+    <div class="container mt-4 mx-auto" id="calendarSection" style="padding: 20px; border-radius: 8px; color: #eee;">
+
+        <!-- Dropdown Selection Section -->
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <label for="viewSelect" class="form-label" style="font-size: 18px; color: #eee;">Prikaži za:</label>
+                <select id="viewSelect" class="form-select mb-3 mx-auto" style="background-color: #555; color: #eee; border-radius: 8px; border: 1px solid #777;">
+                    <option value="month">Mesec</option>
+                    <option value="year">Leto</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Month Selection Section (Centered) -->
+        <div class="row justify-content-center" id="monthOptions">
+            <!-- First Column: Month Input -->
+            <div class="col-md-5 text-center mb-3">
+                <label for="calendarInput" class="form-label" style="font-size: 18px; color: #eee;">Izberi mesec za prikaz:</label>
+                <input type="month" id="calendarInput" class="form-control mx-auto" style="background-color: #555; color: #eee; border-radius: 8px; border: 1px solid #777;" value="@DateTime.Now.ToString("yyyy-MM")" />
+            </div>
+
+            <!-- Second Column: Compare Month Input -->
+            <div class="col-md-5 text-center mb-3">
+                <label for="compareMonthInput" class="form-label" style="font-size: 18px; color: #eee;">Primerjaj z mesecem:</label>
+                <input type="month" id="compareMonthInput" class="form-control mx-auto" style="background-color: #555; color: #eee; border-radius: 8px; border: 1px solid #777;" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM")" />
+            </div>
+        </div>
+
+        <!-- Year Selection Section (Hidden by Default) -->
+        <div class="row justify-content-center" id="yearOptions" style="display: none;">
+            <!-- First Column: Year Input -->
+            <div class="col-md-5 text-center mb-3">
+                <label for="yearInput" class="form-label" style="font-size: 18px; color: #eee;">Izberi leto za prikaz:</label>
+                <input type="number" id="yearInput" class="form-control mx-auto" style="background-color: #555; color: #eee; border-radius: 8px; border: 1px solid #777;" value="@DateTime.Now.Year" min="2000" max="2100" step="1" />
+            </div>
+
+            <!-- Second Column: Compare Year Input -->
+            <div class="col-md-5 text-center mb-3">
+                <label for="compareYearInput" class="form-label" style="font-size: 18px; color: #eee;">Primerjaj z letom:</label>
+                <input type="number" id="compareYearInput" class="form-control mx-auto" style="background-color: #555; color: #eee; border-radius: 8px; border: 1px solid #777;" value="@DateTime.Now.AddYears(-1).Year" min="2000" max="2100" step="1" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const viewSelect = document.getElementById("viewSelect");
+        const monthOptions = document.getElementById("monthOptions");
+        const yearOptions = document.getElementById("yearOptions");
+
+        // Initialize the display based on the selected view (month or year)
+        function updateView() {
+            if (viewSelect.value === "year") {
+                monthOptions.style.display = "none";
+                yearOptions.style.display = "flex";
+            } else {
+                monthOptions.style.display = "flex";
+                yearOptions.style.display = "none";
+            }
+        }
+
+        // Ensure the correct input is displayed when the page loads
+        updateView();
+
+        // Event listener to toggle between month and year
+        viewSelect.addEventListener("change", function () {
+            updateView();
+        });
+    });
+</script>
+
+
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="width: 900px; background-color: #333; border-radius: 12px; color: #eee;">
+        <h2 class="text-center">Plače in nadomestila zaposlenih</h2>
+
+        <!-- Summary for Employee Salaries -->
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            Skupaj: 1200€
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+200€ (17%)</div>
+        </div>
+
+        <!-- Employee Categories -->
+        <div class="d-flex justify-content-around mt-3" style="opacity: 0.9; font-size: 22px; font-weight: bold;">
+            <div style="color: #ff6384;">
+                Kuhinja: 400€
+                <div style="font-size: 16px; font-weight: normal; color: #ff6384;">+50€ (14%)</div>
+            </div>
+            <div style="color: #36a2eb;">
+                Strežba: 300€
+                <div style="font-size: 16px; font-weight: normal; color: #36a2eb;">-20€ (-6%)</div>
+            </div>
+            <div style="color: #ffcd56;">
+                Administracija: 250€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+30€ (13%)</div>
+            </div>
+            <div style="color: #4caf50;">
+                Drugo: 250€
+                <div style="font-size: 16px; font-weight: normal; color: #4caf50;">+10€ (4%)</div>
+            </div>
+        </div>
+
+        <!-- Pie Chart & Bar Chart Side by Side -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="pie-container" style="width: 40%;">
+                <canvas id="salariesPieChart"></canvas>
+            </div>
+            <div class="bar-container" style="width: 55%; height: 300px;">
+                <canvas id="salariesBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Container -->
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="width: 900px; background-color: #333; border-radius: 12px; color: #eee;">
+        <h2 class="text-center">Elektrika, voda in plin</h2>
+
+        <!-- Summary -->
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            Skupaj: 350€
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+50€ (17%)</div>
+        </div>
+
+        <!-- Elektrika, Voda, Plin - Breakdown -->
+        <div class="d-flex justify-content-around mt-3" style="opacity: 0.9; font-size: 22px; font-weight: bold;">
+            <div style="color: #ff6384;">
+                Elektrika: 150€
+                <div style="font-size: 16px; font-weight: normal; color: #ff6384;">+20€ (15%)</div>
+            </div>
+            <div style="color: #36a2eb;">
+                Voda: 100€
+                <div style="font-size: 16px; font-weight: normal; color: #36a2eb;">-10€ (-9%)</div>
+            </div>
+            <div style="color: #ffcd56;">
+                Plin: 100€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+40€ (40%)</div>
+            </div>
+        </div>
+
+        <!-- Pie Chart & Bar Chart -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="pie-container" style="width: 40%;">
+                <canvas id="electricityPieChart"></canvas>
+            </div>
+            <div class="bar-container" style="width: 55%; height: 300px;">
+                <canvas id="electricityBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Živila in pijače -->
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="width: 900px; background-color: #333; border-radius: 12px; color: #eee;">
+        <h2 class="text-center">Živila in pijače</h2>
+
+        <!-- Summary -->
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            Skupaj: 500€
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+70€ (16%)</div>
+        </div>
+
+        <!-- Food & Drinks Breakdown -->
+        <div class="d-flex justify-content-around mt-3" style="opacity: 0.9; font-size: 22px; font-weight: bold;">
+            <div style="color: #ff6384;">
+                Alkoholne: 120€
+                <div style="font-size: 16px; font-weight: normal; color: #ff6384;">+10€ (9%)</div>
+            </div>
+            <div style="color: #36a2eb;">
+                Brezalkoholne: 80€
+                <div style="font-size: 16px; font-weight: normal; color: #36a2eb;">-5€ (-6%)</div>
+            </div>
+            <div style="color: #ffcd56;">
+                Meso: 150€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+30€ (25%)</div>
+            </div>
+            <div style="color: #4caf50;">
+                Mlečni izdelki: 90€
+                <div style="font-size: 16px; font-weight: normal; color: #4caf50;">+20€ (29%)</div>
+            </div>
+            <div style="color: #9b59b6;">
+                Ostalo: 60€
+                <div style="font-size: 16px; font-weight: normal; color: #9b59b6;">+15€ (33%)</div>
+            </div>
+        </div>
+
+        <!-- Pie Chart & Bar Chart -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="pie-container" style="width: 40%;">
+                <canvas id="foodPieChart"></canvas>
+            </div>
+            <div class="bar-container" style="width: 55%; height: 300px;">
+                <canvas id="foodBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-4 d-flex justify-content-between flex-wrap" style="height: 100%;">
+    <!-- Left Column: Najemnina, Oglaševanje, Amortizacija opreme -->
+    <div class="d-flex flex-column" style="width: 48%; height: 100%;">
+        <!-- Najemnina Card -->
+        <div class="card shadow-lg p-4 mx-2 flex-grow-1" style="background-color: #333; border-radius: 12px; color: #eee;">
+            <h2 class="text-center">Najemnina</h2>
+            <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+                500€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+50€ (11%)</div>
+            </div>
+        </div>
+
+        <!-- Oglaševanje Card -->
+        <div class="card shadow-lg p-4 mx-2 mt-4 flex-grow-1" style="background-color: #333; border-radius: 12px; color: #eee;">
+            <h2 class="text-center">Oglaševanje</h2>
+            <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+                200€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">-20€ (-9%)</div>
+            </div>
+        </div>
+
+        <!-- Amortizacija opreme Card -->
+        <div class="card shadow-lg p-4 mx-2 mt-4 flex-grow-1" style="background-color: #333; border-radius: 12px; color: #eee;">
+            <h2 class="text-center">Amortizacija opreme</h2>
+            <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+                400€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+30€ (8%)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Administrativni stroški -->
+    <div class="card shadow-lg p-4" style="width: 48%; background-color: #333; border-radius: 12px; color: #eee; height: 100%;">
+        <h2 class="text-center">Administrativni stroški</h2>
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            Skupaj: 300€
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+40€ (15%)</div>
+        </div>
+
+        <div class="d-flex justify-content-around mt-3" style="opacity: 0.9; font-size: 22px; font-weight: bold;">
+            <div style="color: #ff6384;">
+                Računovodstvo: 120€
+                <div style="font-size: 16px; font-weight: normal; color: #ff6384;">+10€ (9%)</div>
+            </div>
+            <div style="color: #36a2eb;">
+                Davki: 100€
+                <div style="font-size: 16px; font-weight: normal; color: #36a2eb;">+15€ (18%)</div>
+            </div>
+            <div style="color: #ffcd56;">
+                Dovoljenja: 80€
+                <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+15€ (23%)</div>
+            </div>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="d-flex justify-content-center align-items-center mt-4" style="height: 300px;">
+            <div class="pie-container" style="width: 80%; height: 100%;">
+                <canvas id="adminPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row -->
+<div class="container mt-4 d-flex justify-content-between flex-wrap">
+    <!-- Left Column: Inventar -->
+    <div class="card shadow-lg p-4" style="width: 48%; background-color: #333; border-radius: 12px; color: #eee; height: 100%;">
+        <h2 class="text-center">Inventar</h2>
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            €1000
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">+100€ (11%)</div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="d-flex justify-content-center align-items-center mt-4" style="height: 300px;">
+            <div class="bar-container" style="width: 80%; height: 100%;">
+                <canvas id="inventoryBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Drugo -->
+    <div class="card shadow-lg p-4" style="width: 48%; background-color: #333; border-radius: 12px; color: #eee; height: 100%;">
+        <h2 class="text-center">Drugo</h2>
+        <div class="summary text-center" style="font-size: 32px; font-weight: bold; color: #ffcd56;">
+            €600
+            <div style="font-size: 16px; font-weight: normal; color: #ffcd56;">-50€ (-8%)</div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="d-flex justify-content-center align-items-center mt-4" style="height: 300px;">
+            <div class="bar-container" style="width: 80%; height: 100%;">
+                <canvas id="otherBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function createStackedBarChart(canvasId, labels, datasets) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return; // Prevent errors if the canvas doesn't exist
+
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, ticks: { color: "#eee" } },
+                        y: { stacked: true, ticks: { color: "#eee" } }
+                    }
+                }
+            });
+        }
+
+        function createPieChart(canvasId, labels, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return; // Prevent errors if the canvas doesn't exist
+
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: colors, hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function generateRandomData(length, min, max) {
+            return Array.from({ length: length }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+
+        // Stacked Bar Charts
+        createStackedBarChart('otherBarChart', months, [
+            { label: 'Drugo', data: generateRandomData(12, 10, 30), backgroundColor: '#4caf50' }
+        ]);
+
+        createStackedBarChart('inventoryBarChart', months, [
+            { label: 'Inventar', data: generateRandomData(12, 15, 40), backgroundColor: '#36a2eb' }
+        ]);
+
+        createStackedBarChart('salariesBarChart', months, [
+            { label: 'Kuhinja', data: generateRandomData(12, 20, 50), backgroundColor: '#ff6384' },
+            { label: 'Strežba', data: generateRandomData(12, 15, 40), backgroundColor: '#36a2eb' },
+            { label: 'Administracija', data: generateRandomData(12, 10, 30), backgroundColor: '#ffcd56' },
+            { label: 'Drugo', data: generateRandomData(12, 5, 20), backgroundColor: '#4caf50' }
+        ]);
+
+        createStackedBarChart('foodBarChart', months, [
+            { label: 'Alkoholne', data: generateRandomData(12, 10, 25), backgroundColor: '#ff6384' },
+            { label: 'Brezalkoholne', data: generateRandomData(12, 8, 20), backgroundColor: '#36a2eb' },
+            { label: 'Meso', data: generateRandomData(12, 12, 30), backgroundColor: '#ffcd56' },
+            { label: 'Mlečni izdelki', data: generateRandomData(12, 5, 18), backgroundColor: '#4caf50' },
+            { label: 'Ostalo', data: generateRandomData(12, 3, 15), backgroundColor: '#9b59b6' }
+        ]);
+
+        createStackedBarChart('electricityBarChart', months, [
+            { label: 'Elektrika', data: generateRandomData(12, 10, 25), backgroundColor: '#ff6384' },
+            { label: 'Voda', data: generateRandomData(12, 5, 15), backgroundColor: '#36a2eb' },
+            { label: 'Plin', data: generateRandomData(12, 2, 10), backgroundColor: '#ffcd56' }
+        ]);
+
+        // Pie Charts
+        createPieChart('salariesPieChart', ['Kuhinja', 'Strežba', 'Administracija', 'Drugo'], [400, 300, 250, 250], ['#ff6384', '#36a2eb', '#ffcd56', '#4caf50']);
+        createPieChart('adminPieChart', ['Računovodstvo', 'Davki', 'Dovoljenja'], [120, 100, 80], ['#ff6384', '#36a2eb', '#ffcd56']);
+        createPieChart('foodPieChart', ['Alkoholne', 'Brezalkoholne', 'Meso', 'Mlečni izdelki', 'Ostalo'], [120, 80, 150, 90, 60], ['#ff6384', '#36a2eb', '#ffcd56', '#4caf50', '#9b59b6']);
+        createPieChart('electricityPieChart', ['Elektrika', 'Voda', 'Plin'], [150, 100, 100], ['#ff6384', '#36a2eb', '#ffcd56']);
+    });
+</script>
